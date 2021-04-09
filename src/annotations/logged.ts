@@ -15,7 +15,7 @@ export const logged = (target: any, propertyKey: string, descriptor: PropertyDes
                 const log = ctx.logger.toString();
     
                 if(log != null && log != '') {
-                    ctx.message.channel.send(log);
+                    await ctx.message.channel.send(log);
                 }
             }
         }

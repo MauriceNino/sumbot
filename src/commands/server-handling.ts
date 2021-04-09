@@ -6,8 +6,8 @@ import { checkPermissions } from "../annotations/check-permissions";
 
 export class ServerHandling {
 
-    @checkPermissions('MANAGE_MESSAGES')
     @command({name: 'Clear Messages', aliases: ['cls']})
+    @checkPermissions('MANAGE_MESSAGES')
     public static async clearMessages (ctx: IActionContext) {
         const numberOfMsgs = parseInt(ctx.command.split(' ')[1]);
     
@@ -18,8 +18,8 @@ export class ServerHandling {
         }
     }
     
-    @logged
     @command({name: 'Version', aliases: ['version']})
+    @logged
     public static async version (ctx: IActionContext) {
         ctx.logger.info('Reading version from package.json ...');
 
