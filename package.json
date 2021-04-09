@@ -2,9 +2,9 @@
   "name": "sumbot",
   "version": "1.0.0",
   "description": "Bot for the Sum Leuds discord",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "tsc",
+    "start": "tsc && node ./dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,9 +18,11 @@
   },
   "homepage": "https://github.com/MauriceNino/sumbot#readme",
   "dependencies": {
-    "discord.js": "^12.5.3"
+    "discord.js": "^12.5.3",
+    "moment": "^2.29.1"
   },
   "devDependencies": {
+    "@types/node": "^14.14.37",
     "typescript": "^4.2.4"
   }
 }
