@@ -4,8 +4,10 @@
   "description": "Bot for the Sum Leuds discord",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsc && node ./dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./dist/index.js",
+    "build-docker": "docker image build -t discord-bot .",
+    "run-docker": "docker service update --force --image discord-bot:latest discord_bot",
+    "docker": "npm run build-docker && npm run run-docker"
   },
   "repository": {
     "type": "git",

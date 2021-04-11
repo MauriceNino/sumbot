@@ -9,16 +9,19 @@ const COMMAND_PREFIX = '>>';
 const LOG_LEVEL = process.env.LOG_LEVEL || 'DEBUG';
 const DISCORD_API_KEY = process.env.DISCORD_API_KEY;
 
+console.log('Environment list: ', process.env);
+
 const client = new Client();
 
 // Need to be initialized
 new ServerHandling();
 
-client.once('ready', () => {
-  console.log('Sum Bot successfully started');
-  client.user.setActivity({
+client.once('ready', async () => {
+  console.log('Telescope Bot successfully started');
+  
+  await client.user.setActivity({
     type: 'WATCHING',
-    name: 'You'
+    name: 'for stars'
   });
 });
 
