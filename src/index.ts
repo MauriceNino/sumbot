@@ -21,7 +21,7 @@ client.once('ready', async () => {
   
   await client.user.setActivity({
     type: 'WATCHING',
-    name: 'for stars'
+    name: `for stars | ${COMMAND_PREFIX} help`
   });
 });
 
