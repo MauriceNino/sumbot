@@ -4,6 +4,7 @@ import { command, Commands } from '../annotations/command';
 import { logged } from "../annotations/logged";
 import { checkPermissions } from "../annotations/check-permissions";
 import { COMMAND_PREFIX } from "../settings";
+import * as publicIp from 'public-ip';
 
 export class ServerHandling {
 
@@ -33,7 +34,7 @@ export class ServerHandling {
 
         const sizes = commands.reduce((acc, command) => {
             const mainCommand = command.description.aliases[0].length;
-            const optionalCommands = command.description.aliases.slice(1).join(', ').length;
+            const optionalCommands = command.description.aliases.slice(1).join(', ').length + 7;
             return {
                 cmd: acc.cmd > mainCommand ? acc.cmd : mainCommand,
                 aliases: acc.aliases > optionalCommands ? acc.aliases : optionalCommands
@@ -41,16 +42,23 @@ export class ServerHandling {
         }, {cmd: 0, aliases: 0});
 
         const lines = commands.map(command => {
-            const name = command.description.name;
             const desc = command.description.description ? command.description.description : command.description.name;
             const mainCommand = command.description.aliases[0];
-            const optionalCommands = command.description.aliases.slice(1).join(', ');
+            const optionalCommands = command.description.aliases.slice(1);
+            const optionalCommandsStr = optionalCommands.length == 0 ? ' '.repeat(7) : ` [or: ${optionalCommands.join(', ')}]`;
 
-            return `  ${COMMAND_PREFIX} ${mainCommand}${' '.repeat(sizes.cmd - mainCommand.length)} [or: ${optionalCommands}]${' '.repeat(sizes.aliases - optionalCommands.length)}\t${desc}`;
+            return `  ${COMMAND_PREFIX} ${mainCommand}${' '.repeat(sizes.cmd - mainCommand.length)}${optionalCommandsStr}${' '.repeat(sizes.aliases - optionalCommandsStr.length)}\t${desc}`;
         });
 
         lines.unshift(`All commands (some might be restricted):\n`);
 
         await ctx.message.channel.send(`\`\`\`\n${lines.join('\n')}\n\`\`\``);
+    }
+    
+    @command({name: 'Swarmpit', aliases: ['swarmpit']})
+    public static async getMinecraftIp(ctx: IActionContext) {
+        const ip = await publicIp.v4();
+
+        await ctx.message.channel.send(`Swarmpit Dashboard IP: ${ip}:888`);
     }
 }

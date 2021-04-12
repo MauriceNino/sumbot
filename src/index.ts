@@ -1,13 +1,10 @@
 import { CommandHandler } from './command-handler';
 import { Logger } from './utils/logger';
+import { COMMAND_PREFIX } from './settings';
 
 import { Client } from 'discord.js';
 
 import * as cinit from './commands/commands-init';
-import { COMMAND_PREFIX } from './settings';
-cinit.init();
-
-
 
 const LOG_LEVEL = process.env.LOG_LEVEL || 'DEBUG';
 const DISCORD_API_KEY = process.env.DISCORD_API_KEY;
@@ -38,3 +35,4 @@ client.on('message', message => {
 });
 
 client.login(DISCORD_API_KEY);
+cinit.init();
