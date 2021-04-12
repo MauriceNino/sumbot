@@ -26,6 +26,12 @@ export const command = (description: ICommandDescription) => {
     };
 }
 
-export const commandGetAction = (cmd: string): Function => {
-    return COMMAND_COLLECTION.find(command => command.description.aliases.includes(cmd))?.action;
+export class Commands {
+    public static getActionFromCommandStr(cmd: string): Function {
+        return COMMAND_COLLECTION.find(command => command.description.aliases.includes(cmd))?.action;
+    }
+    
+    public static getCommands(): ICommand[] {
+        return COMMAND_COLLECTION;
+    }
 }

@@ -1,5 +1,5 @@
 import { Client, Message } from "discord.js";
-import { commandGetAction } from "./annotations/command";
+import { Commands } from "./annotations/command";
 import { IActionContext } from "./commands/context.model";
 import { Logger } from "./utils/logger";
 
@@ -13,7 +13,7 @@ export class CommandHandler {
             const commandString = message.content.trimStart().substring(2).trimStart();
             const cmd = commandString.split(' ')[0].trim().toLowerCase();
 
-            const action = commandGetAction(cmd);
+            const action = Commands.getActionFromCommandStr(cmd);
 
             if(action){
                 await action({
