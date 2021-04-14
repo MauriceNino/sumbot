@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "build-docker": "docker image build -t discord-bot .",
-    "run-docker": "docker service update --force --image discord-bot:latest discord_bot",
-    "docker": "npm run build-docker && npm run run-docker",
+    "docker": "npm run build-docker && docker service update --force --image discord-bot:latest discord_bot",
     "docker:dev": "npm run build-docker && docker container run -itd --rm -e DISCORD_API_KEY --name discord_bot discord-bot"
   },
   "repository": {

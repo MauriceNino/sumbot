@@ -1,5 +1,5 @@
 FROM node:latest
-WORKDIR /usr/src/app
+WORKDIR /opt/bot
 
 COPY package*.json ./
 RUN npm install && npm i -g typescript ts-node
