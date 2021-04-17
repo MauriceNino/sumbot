@@ -3,7 +3,7 @@ import { IActionContext } from "./context.model";
 import { command, Commands } from '../annotations/command';
 import { logged } from "../annotations/logged";
 import { checkPermissions } from "../annotations/check-permissions";
-import { COMMAND_PREFIX } from "../settings";
+import { COMMAND_PREFIX, DASHBOARD_DOMAIN } from "../settings";
 import * as publicIp from 'public-ip';
 
 export class ServerHandling {
@@ -32,22 +32,16 @@ export class ServerHandling {
     public static async help(ctx: IActionContext) {
         const commands = Commands.getCommands();
 
-        const sizes = commands.reduce((acc, command) => {
-            const mainCommand = command.description.aliases[0].length;
-            const optionalCommands = command.description.aliases.slice(1).join(', ').length + 7;
-            return {
-                cmd: acc.cmd > mainCommand ? acc.cmd : mainCommand,
-                aliases: acc.aliases > optionalCommands ? acc.aliases : optionalCommands
-            }
-        }, {cmd: 0, aliases: 0});
+        const commandLength = commands.reduce((commandLength, command) => {
+            const mainCommandLength = command.description.aliases[0].length;
+            return commandLength > mainCommandLength ? commandLength : mainCommandLength;
+        }, 0);
 
         const lines = commands.map(command => {
             const desc = command.description.description ? command.description.description : command.description.name;
             const mainCommand = command.description.aliases[0];
-            const optionalCommands = command.description.aliases.slice(1);
-            const optionalCommandsStr = optionalCommands.length == 0 ? ' '.repeat(7) : ` [or: ${optionalCommands.join(', ')}]`;
 
-            return `  ${COMMAND_PREFIX} ${mainCommand}${' '.repeat(sizes.cmd - mainCommand.length)}${optionalCommandsStr}${' '.repeat(sizes.aliases - optionalCommandsStr.length)}\t${desc}`;
+            return `  ${COMMAND_PREFIX} ${mainCommand}${' '.repeat(commandLength - mainCommand.length)}\t${desc}`;
         });
 
         lines.unshift(`All commands (some might be restricted):\n`);
@@ -55,10 +49,14 @@ export class ServerHandling {
         await ctx.message.channel.send(`\`\`\`\n${lines.join('\n')}\n\`\`\``);
     }
     
-    @command({name: 'Swarmpit', aliases: ['swarmpit']})
+    @command({name: 'Dashboard', aliases: ['dash']})
     public static async getMinecraftIp(ctx: IActionContext) {
         const ip = await publicIp.v4();
 
-        await ctx.message.channel.send(`Swarmpit Dashboard IP: ${ip}:888`);
+        if(DASHBOARD_DOMAIN) {
+            await ctx.message.channel.send(`Server Dashboard: <http://${DASHBOARD_DOMAIN}:5000>`);
+        } else {
+            await ctx.message.channel.send(`Server Dashboard: <http://${ip}:5000>`);
+        }
     }
 }
