@@ -54,7 +54,7 @@ export class ServerHandling {
         const ip = await publicIp.v4();
 
         if(DASHBOARD_DOMAIN) {
-            await ctx.message.channel.send(`Server Dashboard: <http://${DASHBOARD_DOMAIN}:4001>`);
+            await ctx.message.channel.send(`Server Dashboard: <https://${DASHBOARD_DOMAIN}>`);
         } else {
             await ctx.message.channel.send(`Server Dashboard: <http://${ip}:4001>`);
         }
