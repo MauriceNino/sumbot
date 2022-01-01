@@ -1,26 +1,23 @@
-import { CommandHandler } from './command-handler';
-import { Logger } from './utils/logger';
-import { COMMAND_PREFIX, DISCORD_API_KEY, LOG_LEVEL } from './settings';
+import { Client } from "discord.js";
+import { CommandHandler } from "./command-handler";
+import * as cinit from "./commands/commands-init";
+import { COMMAND_PREFIX, DISCORD_API_KEY, LOG_LEVEL } from "./settings";
+import { Logger } from "./utils/logger";
 
-import { Client } from 'discord.js';
-
-import * as cinit from './commands/commands-init';
-
-
-console.log('Environment list: ', process.env);
+console.log("Environment list: ", process.env);
 
 const client = new Client();
 
-client.once('ready', async () => {
-  console.log('Telescope Bot successfully started');
-  
+client.once("ready", async () => {
+  console.log("Telescope Bot successfully started");
+
   await client.user.setActivity({
-    type: 'WATCHING',
-    name: `for stars | ${COMMAND_PREFIX} help`
+    type: "WATCHING",
+    name: `for stars | ${COMMAND_PREFIX} help`,
   });
 });
 
-client.on('message', message => {
+client.on("message", (message) => {
   const messageContent = message.content.trimStart();
 
   if (messageContent.startsWith(COMMAND_PREFIX)) {
