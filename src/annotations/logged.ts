@@ -8,8 +8,11 @@ export const logged = (target: any, propertyKey: string, descriptor: PropertyDes
     descriptor.value = async function(ctx: IActionContext) {
         try {
             await original(ctx);
-        } catch(e) {
-            ctx.logger.error(e);
+      if (typeof e === "string") {
+        ctx.logger.error(e);
+      } else {
+        ctx.logger.error("Unknown Error occurred");
+      }
         } finally {
             if(LOG_ARGS.some(arg => ctx.command.includes(arg))) {
                 const log = ctx.logger.toString();
