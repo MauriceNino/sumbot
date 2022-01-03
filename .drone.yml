@@ -4,49 +4,42 @@ type: docker
 name: test & deploy
 
 steps:
-- name: build-local
-  image: node:lts-alpine
-  commands:
-  - npm i -g typescript
-  - npm i
-  - tsc
-- name: build image
-  image: docker:dind
-  when:
-    branch: master
-  volumes:
-  - name: dockersock
-    path: /var/run/docker.sock
-  commands:
-  - docker image build -t discord-bot .
-- name: deploy image
-  image: docker:dind
-  when:
-    branch: master
-  volumes:
-  - name: dockersock
-    path: /var/run/docker.sock
-  environment:
-    DISCORD_API_KEY: 
-      from_secret: DISCORD_API_KEY
-    MC_SERVER_DOMAIN: 
-      from_secret: MC_SERVER_DOMAIN
-    DASHBOARD_DOMAIN: 
-      from_secret: DASHBOARD_DOMAIN
-  commands:
-  - docker container stop telescope_discord_bot || true
-  - docker container rm telescope_discord_bot || true
-  - docker container run -itd
-      -e DISCORD_API_KEY=$DISCORD_API_KEY
-      -e MC_SERVER_DOMAIN=$MC_SERVER_DOMAIN
-      -e DASHBOARD_DOMAIN=$DASHBOARD_DOMAIN
-      -e LOG_LEVEL=INFO
-      --restart unless-stopped
-      --name telescope_discord_bot
-      discord-bot
-  - docker image prune -f
+  - name: test
+    image: node:lts-alpine
+    commands:
+      - npm i -g typescript
+      - npm i
+      - tsc
+  - name: update server files
+    image: alpine/git
+    when:
+      branch: master
+    volumes:
+      - name: server
+        path: /server
+    commands:
+      - cd /server/_repos/telescope
+      - git pull --rebase
+  - name: deploy to server
+    image: docker/compose
+    when:
+      branch: master
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: server
+        path: /server
+    commands:
+      - cd /server
+      - ./start.sh telescope --build
 
 volumes:
-- name: dockersock
-  host:
-    path: /var/run/docker.sock
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
+  - name: server
+    host:
+      path: /server
+---
+kind: signature
+hmac: 3fecfb7e721ea5ddc1b3bbe4b547d8473c5f9c7f1ac02fe9f184900cf30b86c2
