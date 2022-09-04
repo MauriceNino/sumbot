@@ -1,15 +1,9 @@
-FROM node:lts-alpine
-WORKDIR /opt/bot
+FROM node:18-alpine AS base
 
-COPY . .
+WORKDIR /app
 
-RUN npm i -g typescript \
-    && npm i \
-    && tsc \
-    && npm rm -g typescript \
-    && rm -r node_modules \
-    && npm i --only=prod
+RUN \
+    yarn &&\
+    yarn build
 
-ENV NODE_ENV=production
-
-CMD [ "npm", "start" ]
+CMD ["yarn", "start"]
