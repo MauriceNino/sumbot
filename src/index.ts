@@ -1,33 +1,26 @@
-import { Client } from "discord.js";
-import { CommandHandler } from "./command-handler";
-import * as cinit from "./commands/commands-init";
-import { COMMAND_PREFIX, DISCORD_API_KEY, LOG_LEVEL } from "./settings";
-import { Logger } from "./utils/logger";
+import { Routes } from 'discord.js';
+import { getMusicQueue, updateMessage } from './music';
+import { CLIENT_ID } from './settings';
+import { buttonsMap, client, commandsMap, rest } from './setup';
 
-console.log("Environment list: ", process.env);
+client.on('interactionCreate', async interaction => {
+  if (interaction.isChatInputCommand()) {
+    commandsMap[interaction.commandName]?.executor(interaction);
+  }
 
-const client = new Client();
-
-client.once("ready", async () => {
-  console.log("Telescope Bot successfully started");
-
-  await client.user.setActivity({
-    type: "WATCHING",
-    name: `for stars | ${COMMAND_PREFIX} help`,
-  });
-});
-
-client.on("message", (message) => {
-  const messageContent = message.content.trimStart();
-
-  if (messageContent.startsWith(COMMAND_PREFIX)) {
-    const loggerInstance = new Logger(LOG_LEVEL);
-
-    // Handle command
-    const cmdHandler = new CommandHandler(loggerInstance);
-    cmdHandler.handle(client, message);
+  if (interaction.isButton()) {
+    buttonsMap[interaction.customId]?.executor(interaction);
   }
 });
 
-client.login(DISCORD_API_KEY);
-cinit.init();
+client.on('guildCreate', async guild => {
+  const queue = getMusicQueue(guild.id);
+  updateMessage(queue);
+});
+
+rest
+  .put(Routes.applicationCommands(CLIENT_ID), {
+    body: Object.values(commandsMap).map(c => c.command.toJSON()),
+  })
+  .then(() => console.log('Successfully registered application commands.'))
+  .catch(console.error);

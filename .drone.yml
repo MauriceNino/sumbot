@@ -7,9 +7,8 @@ steps:
   - name: test
     image: node:lts-alpine
     commands:
-      - npm i -g typescript
-      - npm i
-      - tsc
+      - yarn
+      - yarn build
   - name: update server files
     image: alpine/git
     when:
@@ -42,4 +41,4 @@ volumes:
       path: /server
 ---
 kind: signature
-hmac: 3fecfb7e721ea5ddc1b3bbe4b547d8473c5f9c7f1ac02fe9f184900cf30b86c2
+hmac: 51fc2d0fec767b1b1a82b0cc603bee583953bb439dccd88023d4cc1bbd166c84

@@ -6,9 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/index.js",
-    "build-docker": "docker image build -t discord-bot .",
-    "docker": "npm run build-docker && docker service update --force --image discord-bot:latest discord_bot",
-    "docker:dev": "npm run build-docker && docker container run -it --rm -e DISCORD_API_KEY --name discord_bot discord-bot"
+    "dev": "nodemon src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -21,13 +19,17 @@
   },
   "homepage": "https://github.com/MauriceNino/sumbot#readme",
   "dependencies": {
-    "discord.js": "^12.5.3",
-    "moment": "^2.29.1",
-    "public-ip": "^4.0.3"
+    "@discordjs/rest": "1.1.0",
+    "discord.js": "14.3.0",
+    "moment": "2.29.4"
   },
   "devDependencies": {
-    "@types/node": "^18.7.14",
-    "typescript": "^4.2.4"
+    "@types/moment": "2.13.0",
+    "@types/node": "18.7.14",
+    "nodemon": "2.0.19",
+    "prettier": "2.7.1",
+    "ts-node": "10.9.1",
+    "typescript": "4.8.2"
   },
   "packageManager": "yarn@3.2.3"
 }
