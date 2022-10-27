@@ -4,31 +4,32 @@ import { readdirSync } from 'fs';
 import path from 'path';
 import { getMusicQueue, updateMessage } from './music';
 import { DISCORD_API_KEY, IS_DEV } from './settings';
-import { Button, Command } from './types';
+import { Button, Command, Modal } from './types';
 
 export const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
+  ],
 });
 export const rest = new REST({ version: '10' }).setToken(DISCORD_API_KEY);
 client.login(DISCORD_API_KEY);
 
-const commandsPath = path.join(__dirname, 'commands');
-const commands = readdirSync(commandsPath).map(
-  f => require(path.join(commandsPath, f)) as Command
-);
-export const commandsMap = commands.reduce<Record<string, Command>>(
-  (acc, c) => ({ ...acc, [c.command.name]: c }),
-  {}
-);
+const getMap = <T>(subPath: string, nameExtractor: (item: T) => string) => {
+  const joinedPath = path.join(__dirname, subPath);
+  const items = readdirSync(joinedPath).map(
+    f => require(path.join(joinedPath, f)) as T
+  );
+  return items.reduce<Record<string, T>>(
+    (acc, c) => ({ ...acc, [nameExtractor(c)]: c }),
+    {}
+  );
+};
 
-const buttonsPath = path.join(__dirname, 'buttons');
-const buttons = readdirSync(buttonsPath).map(
-  f => require(path.join(buttonsPath, f)) as Button
-);
-export const buttonsMap = buttons.reduce<Record<string, Button>>(
-  (acc, b) => ({ ...acc, [b.button]: b }),
-  {}
-);
+export const commandsMap = getMap<Command>('commands', c => c.command.name);
+export const buttonsMap = getMap<Button>('buttons', c => c.button);
+export const modalCallbacksMap = getMap<Modal>('modal_callbacks', c => c.modal);
 
 client.once('ready', () => {
   client.user.setActivity({
@@ -38,8 +39,11 @@ client.once('ready', () => {
       : 'the starry night sky',
   });
 
-  client.guilds.cache.forEach(guild => {
+  client.guilds.cache.forEach(async guild => {
     const queue = getMusicQueue(guild.id);
+
+    await queue.addSong(client.user, 'Eminem Till I Collapse', false);
+
     updateMessage(queue);
   });
 });

@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 import { noReply } from '../helpers';
 import { getMusicQueue } from '../music';
-import { AdditionType, Command } from '../types';
+import { Command } from '../types';
 
 module.exports = {
   command: new SlashCommandBuilder()
@@ -19,15 +19,5 @@ module.exports = {
     const queue = getMusicQueue(interaction.guild.id);
     const requestingUser = interaction.user.id;
     noReply(interaction);
-
-    queue?.play([
-      {
-        additionType: AdditionType.SINGLE_REQUEST,
-        name: 'Generic Song',
-        artist: 'David Guetta',
-        duration: 300,
-        requestingUser,
-      },
-    ]);
   },
 } as Command;

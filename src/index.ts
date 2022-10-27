@@ -1,15 +1,21 @@
 import { Routes } from 'discord.js';
 import { getMusicQueue, updateMessage } from './music';
 import { CLIENT_ID } from './settings';
-import { buttonsMap, client, commandsMap, rest } from './setup';
+import {
+  buttonsMap,
+  client,
+  commandsMap,
+  modalCallbacksMap,
+  rest,
+} from './setup';
 
 client.on('interactionCreate', async interaction => {
   if (interaction.isChatInputCommand()) {
     commandsMap[interaction.commandName]?.executor(interaction);
-  }
-
-  if (interaction.isButton()) {
+  } else if (interaction.isButton()) {
     buttonsMap[interaction.customId]?.executor(interaction);
+  } else if (interaction.isModalSubmit()) {
+    modalCallbacksMap[interaction.customId]?.executor(interaction);
   }
 });
 

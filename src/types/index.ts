@@ -2,6 +2,7 @@ import {
   ButtonInteraction,
   CacheType,
   ChatInputCommandInteraction,
+  ModalSubmitInteraction,
   SlashCommandBuilder,
 } from 'discord.js';
 
@@ -13,6 +14,10 @@ export type Button = {
   button: string;
   executor: (interaction: ButtonInteraction<CacheType>) => void;
 };
+export type Modal = {
+  modal: string;
+  executor: (interaction: ModalSubmitInteraction<CacheType>) => void;
+};
 
 export enum AdditionType {
   PLAYLIST,
@@ -20,10 +25,9 @@ export enum AdditionType {
 }
 
 export type MusicTitle = {
-  requestingUser: string;
   name: string;
-  artist: string;
-  genre?: string;
+  url: string;
+  thumbnail: string;
   duration: number;
   additionType: AdditionType;
 };

@@ -14,24 +14,33 @@ const queues: Record<string, MusicQueue> = {};
 
 export const updateMessage = async (queue: MusicQueue) => {
   const channel = queue.getChannel();
+  const list = queue.list();
 
-  const embed = new EmbedBuilder()
-    .setColor(0xd742f5)
-    .setTitle('David Guetta - Generic Song (Youtube Music)')
-    .setThumbnail(
-      'https://i.pinimg.com/originals/e5/8b/3d/e58b3dea512ce22a714aa05fe807f485.png'
-    )
-    .setDescription(
-      `${bold(
-        underscore('Queue')
-      )}\n1. Shape of you - Ed Sheeran\n2. My time - Jungkook\n3. Lighters - Bruno Mars\n...`
-    )
-    .setFooter({
-      text: `Add any song from Youtube, YT Music, or Soundcloud, using the button below. (Last updated at ${moment().format(
-        'hh:mm:ss DD.MM.YYYY'
-      )})`,
-    })
-    .setURL('https://www.google.com');
+  let embed: EmbedBuilder;
+  if (list.length > 0) {
+    const currentlyPlaying = list.at(0);
+    const queueTitles = queue
+      .list()
+      .slice(1)
+      .map((s, i) => `${i + 1}. ${s.title}`)
+      .join('\n');
+    embed = new EmbedBuilder()
+      .setColor(0xd742f5)
+      .setTitle(currentlyPlaying.title)
+      .setThumbnail(currentlyPlaying.thumbnail)
+      .setDescription(`${bold(underscore('Queue'))}\n${queueTitles}`)
+      .setFooter({
+        text: `Last updated at ${moment().format('hh:mm:ss DD.MM.YYYY')})`,
+      })
+      .setURL(currentlyPlaying.url);
+  } else {
+    embed = new EmbedBuilder()
+      .setColor(0xd742f5)
+      .setTitle('Currently no Tracks in Queue')
+      .setFooter({
+        text: `Last updated at ${moment().format('hh:mm:ss DD.MM.YYYY')})`,
+      });
+  }
 
   const controlsRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder()

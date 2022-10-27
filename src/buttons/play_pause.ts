@@ -1,12 +1,15 @@
-import { getMusicQueue } from '../music';
+import { getMusicQueue, updateMessage } from '../music';
 import { Button } from '../types';
 
 module.exports = {
   button: 'play_pause',
-  executor: interaction => {
+  executor: async interaction => {
     interaction.deferReply();
-    const queue = getMusicQueue(interaction.guildId);
-    queue.pauseOrUnpause();
+
+    const queue = getMusicQueue(interaction.guild.id);
+    await queue.pauseOrUnpause(interaction.user);
+    await updateMessage(queue);
+
     interaction.deleteReply();
   },
 } as Button;
